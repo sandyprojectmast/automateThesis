@@ -15,7 +15,7 @@ client.on('connect', () => {
     });
   });
 });
-
+//testing
 client.on('message', (topic, message) => {
   console.log(`Received message on topic ${topic}: ${message.toString()}`);
 });
