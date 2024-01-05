@@ -24,7 +24,7 @@ const client = mqtt.connect('mqtt://localhost', {
 
 async function subscribeToTopics(topics) {
     topics.forEach((topic) => {
-        const valTopic = topic + "val";
+        const valTopic = topic + "/val";
         client.subscribe(valTopic, (err) => {
             if (!err) {
                 console.log(`Subscribed to ${valTopic}`);
