@@ -1,5 +1,5 @@
 import mqtt from 'mqtt';
-import db from "../configs/database_config.js";
+import db from "../../configs/database_config.js";
 
 //const topics = ['SN123', 'SN124', 'SN125'];
 
