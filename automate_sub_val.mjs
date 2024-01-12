@@ -56,6 +56,7 @@ async function saveValueToDB(topic, messages) {
     const dataToUpdate = {
         ...JSON.parse(messages),
         serial_number: collectionName,
+        status: "Connected",
         updatedAt: currentDate
     };
 
