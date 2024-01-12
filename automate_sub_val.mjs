@@ -45,7 +45,10 @@ async function saveValueToDB(topic, messages) {
     const database = db.db("Log");
     const collectionName = topic;
 
-    const collections = await database.listCollections({ name: collectionName }).toArray();
+    await database.collection(collectionName).insertOne(messages, function(err, res) {
+        if (err) throw err;
+        console.log("Number of inserted:" + res.insertedCount);
+    });
 
 
 }
