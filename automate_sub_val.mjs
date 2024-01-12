@@ -42,17 +42,32 @@ async function watchForChanges() {
 }
 
 async function saveValueToDB(topic, messages) {
-    const database = db.db("Log");
+    const databaseLog = db.db("Log");
+    const databaseStream = db.db("Data");
     const collectionName = topic.replace(/\/val$/, '');;
     const currentDate = new Date();
     currentDate.setHours(currentDate.getHours() + 7);
-    console.log(currentDate);
+
     const dataToInsert = {
         ...JSON.parse(messages),
-        updateAt: currentDate
+        updatedAt: currentDate
     };
 
-    await database.collection(collectionName).insertOne(dataToInsert, function(err, res) {
+    const dataToUpdate = {
+        ...JSON.parse(messages),
+        serial_number: collectionName,
+        updatedAt: currentDate
+    };
+
+    var myquery = { serial_number: collectionName };
+    var newvalues = { $set: dataToUpdate };
+
+    await databaseStream.collection("data_streaming").updateOne(myquery, newvalues, function(err, res) {
+        if (err) throw err;
+        console.log("1 doc updated");
+    });
+
+    await databaseLog.collection(collectionName).insertOne(dataToInsert, function(err, res) {
         if (err) throw err;
         console.log("Number of inserted:" + res.insertedCount);
     });
