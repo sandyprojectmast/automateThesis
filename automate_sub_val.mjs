@@ -45,6 +45,7 @@ async function saveValueToDB(topic, messages) {
     const database = db.db("Log");
     const collectionName = topic.replace(/\/val$/, '');;
     const currentDate = new Date();
+    currentDate.setHours(currentDate.getHours() + 7);
     console.log(currentDate);
     const dataToInsert = {
         ...JSON.parse(messages),
