@@ -43,7 +43,7 @@ async function watchForChanges() {
 
 async function saveValueToDB(topic, messages) {
     const database = db.db("Log");
-    const collectionName = topic;
+    const collectionName = topic.replace(/\/val$/, '');;
 
     await database.collection(collectionName).insertOne(JSON.parse(messages), function(err, res) {
         if (err) throw err;
