@@ -61,8 +61,9 @@ async function saveValueToDB(topic, messages) {
 
     var myquery = { serial_number: collectionName };
     var newvalues = { $set: dataToUpdate };
+    var options = { upsert: true }
 
-    await databaseStream.collection("data_streaming").updateOne(myquery, newvalues, function(err, res) {
+    await databaseStream.collection("data_streaming").updateOne(myquery, newvalues, options, function(err, res) {
         if (err) throw err;
         console.log("1 doc updated");
     });
