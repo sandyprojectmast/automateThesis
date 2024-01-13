@@ -62,7 +62,13 @@ async function saveValueToDB(topic, messages) {
 
     var myquery = { serial_number: collectionName };
     var newvalues = { $set: dataToUpdate };
-    var options = { upsert: true }
+    var options = { upsert: true };
+    var statusUpdate = { $set: { status: "Connected" } };
+
+    await databaseStream.collection("device").updateOne(myquery, statusUpdate, function(err, res) {
+        if (err) throw err;
+        console.log("1 doc updated");
+    });
 
     await databaseStream.collection("data_streaming").updateOne(myquery, newvalues, options, function(err, res) {
         if (err) throw err;
