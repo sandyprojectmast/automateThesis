@@ -18,13 +18,31 @@ async function getLastUpdateFromMongoDB(serialNumbers) {
         const collection = database.collection("data_streaming");
 
         const devices = await collection.find({ serial_number: { $in: serialNumbers } }).toArray();
-        console.log(devices);
-        // devices.foreach((serial_number) => {
-        //   hasPassedOneMinutes()
-        // });
+        const currentTime = new Date();
+        const minutesThreshold = 1;
+
+        const isUpdatedWithinThreshold = devices.map((item) => {
+            const updatedAtTime = item.updatedAt;
+            const timeDifference = (currentTime - updatedAtTime) / (1000 * 60); // Convert milliseconds to minutes
+
+            return timeDifference >= minutesThreshold;
+        });
+
+        isUpdatedWithinThreshold.forEach((isUpdated, index) => {
+            if (isUpdated) {
+                update(devices[index]);
+            }
+        });
+
     } catch (error) {
         console.error(error);
     }
+}
+
+function update(item) {
+
+    console.log(`Updating item with _id: ${item._id}`);
+
 }
 
 async function getSerialNumberFromMongoDB() {
