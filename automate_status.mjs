@@ -47,3 +47,5 @@ async function watchForChanges() {
         await new Promise(resolve => setTimeout(resolve, 10000)); // Adjust the interval as needed
     }
 }
+
+watchForChanges();
