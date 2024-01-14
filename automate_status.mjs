@@ -1,21 +1,49 @@
-import mqtt from 'mqtt';
-const topics = ['SN123', 'SN124', 'SN125']; // Add or remove topics as needed
+import db from "../../configs/database_config.js";
 
-const client = mqtt.connect('mqtt://localhost', {
-  username: 'mqtt_pass',
-  password: 'thesismania',
-});
+function hasPassedOneMinutes(data) {
+    // Extract the updatedAt timestamp and convert it to a Date object
+    const updatedAt = new Date(data.updatedAt.$date);
 
-client.on('connect', () => {
-  topics.forEach((topic) => {
-    client.subscribe(topic, (err) => {
-      if (!err) {
-        console.log(`Subscribed to ${topic}`);
-      }
-    });
-  });
-});
-//testing
-client.on('message', (topic, message) => {
-  console.log(`Received message on topic ${topic}: ${message.toString()}`);
-});
+    const currentTime = new Date();
+    const timeDifference = (currentTime - updatedAt) / (1000 * 60);
+
+    // Check if the time difference is greater than 10 minutes
+    return timeDifference > 1;
+}
+
+async function getLastUpdateFromMongoDB(serialNumbers) {
+
+    try {
+        const database = db.db("Data");
+        const collection = database.collection("data_streaming");
+
+        const devices = await collection.find({ serial_number: { $in: serialNumbers } }).toArray();
+        console.log(devices);
+        // devices.foreach((serial_number) => {
+        //   hasPassedOneMinutes()
+        // });
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+async function getSerialNumberFromMongoDB() {
+
+    try {
+        const database = db.db("Data");
+        const collection = database.collection("device");
+
+        const devices = await collection.find({}).toArray();
+        return devices.map((device) => device.serial_number);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+async function watchForChanges() {
+    while (true) {
+        const serial_number = await getSerialNumberFromMongoDB();
+        await getLastUpdateFromMongoDB(serial_number);
+        await new Promise(resolve => setTimeout(resolve, 10000)); // Adjust the interval as needed
+    }
+}
