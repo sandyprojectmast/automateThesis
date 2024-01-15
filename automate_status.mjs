@@ -44,7 +44,7 @@ async function update(item) {
     console.log(`Updating item with _id: ${item._id}`);
     const databaseStream = db.db("Data");
     var statusUpdate = { $set: { status: "Not Connected" } };
-    var myquery = { id: item._id };
+    var myquery = { serial_number: item.serial_number };
     await databaseStream.collection("device").updateOne(myquery, statusUpdate, function(err, res) {
         if (err) throw err;
         console.log("1 doc updated");
