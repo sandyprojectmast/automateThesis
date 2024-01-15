@@ -27,7 +27,7 @@ async function getLastUpdateFromMongoDB(serialNumbers) {
 
             return timeDifference >= minutesThreshold;
         });
-
+        consosle.log(isUpdatedWithinThreshold);
         isUpdatedWithinThreshold.forEach((isUpdated, index) => {
             if (isUpdated) {
                 update(devices[index]);
